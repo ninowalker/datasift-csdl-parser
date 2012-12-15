@@ -30,7 +30,7 @@ class CSDLParser(object):
         ).setName("comparison")
     
         condition = comparison | stream | exists | subExpr
-        subExpr << pp.Suppress('(') + condition + pp.Suppress(')')
+        subExpr << pp.Literal('(') + condition + pp.Literal(')')
         negation = pp.Group(pp.CaselessLiteral("not") + condition).setName("negation")
         condition = condition | negation
     
@@ -41,10 +41,10 @@ class CSDLParser(object):
             ])
     
         # tag "thing" { expr }
-        tag = pp.Group(pp.Literal("tag") + pp.quotedString + pp.Suppress('{') + expr + pp.Suppress('}')).setName("tag")
+        tag = pp.Group(pp.Literal("tag") + pp.quotedString + pp.Literal('{') + expr + pp.Literal('}')).setName("tag")
     
         # return { expr }
-        a_return = pp.Group(pp.Literal("return") + pp.Suppress('{') + expr + pp.Suppress('}')).setName("return")
+        a_return = pp.Group(pp.Literal("return") + pp.Literal('{') + expr + pp.Literal('}')).setName("return")
     
         # a single expression or tag [, tag, ...] return { expression }
         parser = expr | (pp.OneOrMore(tag) + a_return)
