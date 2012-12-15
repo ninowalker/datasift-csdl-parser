@@ -3,6 +3,11 @@ test_operator:
   expected:
   - [twitter.text, contains, '"Cincinnati Reds"']
 
+test_hashtag:
+  input: twitter.text contains "#LCK"
+  expected:
+  - [twitter.text, contains, '"#LCK"']
+
 test_regex:
   input: interaction.content regex_exact "I love (Twitter|Tweeting|Facebook|Social)!?" 
   expected:
