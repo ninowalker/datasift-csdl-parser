@@ -1,0 +1,297 @@
+test_operator:
+  input: twitter.text contains "Cincinnati Reds"
+  expected:
+  - [twitter.text, contains, '"Cincinnati Reds"']
+
+test_regex:
+  input: interaction.content regex_exact "I love (Twitter|Tweeting|Facebook|Social)!?" 
+  expected:
+  - [interaction.content, regex_exact, '"I love (Twitter|Tweeting|Facebook|Social)!?"']
+
+test_AND:
+  input: twitter.text contains "google" and interaction.sample < 5.25
+  expected:
+  - - [twitter.text, contains, '"google"']
+    - AND
+    - [interaction.sample, <, '5.25']
+    
+test_OR_multiline:
+  input: 'twitter.text contains "marketing"
+
+    OR twitter.retweeted.text contains "marketing"
+
+    '
+  expected:
+  - - [twitter.text, contains, '"marketing"']
+    - OR
+    - [twitter.retweeted.text, contains, '"marketing"']
+    
+test_AND_OR_AND:
+  input: interaction.sample < 50 and (twitter.text contains "coffee" or (twitter.retweet.text contains "coffee" and interaction.sample <= 10))
+  expected:
+  - - [interaction.sample, <, '50']
+    - AND
+    - - [twitter.text, contains, '"coffee"']
+      - OR
+      - - [twitter.retweet.text, contains, '"coffee"']
+        - AND
+        - [interaction.sample, <=, '10']
+  
+test_multiline:
+  input: "interaction.sample < 50\nand (\n    twitter.text contains \"coffee\" or\n\
+    \    ( \n        twitter.retweet.text contains \"coffee\" and\n        interaction.sample\
+    \ <= 10\n    )\n)"
+  expected:
+  - - [interaction.sample, <, '50']
+    - AND
+    - - [twitter.text, contains, '"coffee"']
+      - OR
+      - - [twitter.retweet.text, contains, '"coffee"']
+        - AND
+        - [interaction.sample, <=, '10']
+        
+test_exists:
+  input: interaction.geo exists
+  expected:
+  - [interaction.geo, exists]
+
+test_negation:
+  input: twitter.text contains "Packard" AND NOT twitter.text contains "Hewlett"
+  expected:
+  - - [twitter.text, contains, '"Packard"']
+    - AND
+    - - not
+      - [twitter.text, contains, '"Hewlett"']
+
+test_stream:
+  input: 'twitter.text contains "election"
+
+    AND language.tag == "en"
+
+    AND stream "670c493f73a29a280162aa2b688fa956"
+
+    '
+  expected:
+  - - [twitter.text, contains, '"election"']
+    - AND
+    - [language.tag, ==, '"en"']
+    - AND
+    - [stream, '"670c493f73a29a280162aa2b688fa956"']
+
+test_number_list:
+  input: twitter.user.id in [111111111,111111112,111111113]
+  expected:
+  - - twitter.user.id
+    - in
+    - ['111111111', ',', '111111112', ',', '111111113']
+test_tag:
+  input: "tag \"Steve Jobs\" { interaction.content contains \"Steve Jobs\" }\nreturn\
+    \ {\n    interaction.content contains_any \"Apple, Mac, iPad, Steve Jobs\"\n}"
+  expected:
+  - - tag
+    - '"Steve Jobs"'
+    - [interaction.content, contains, '"Steve Jobs"']
+  - - return
+    - [interaction.content, contains_any, '"Apple, Mac, iPad, Steve Jobs"']
+
+test_tag_stream:
+  input: "tag \"APPLE\" {stream \"f0596f03644177b8bf5b59708a08bfe8\"}\ntag \"Snow\"\
+    {stream \"6740288c3c3d02984d1dc624d77e198f\"}\ntag \"Date\" {stream \"922aad7bec1836c83ede051b153d3d09\"\
+    }\nreturn {\n    stream \"f0596f03644177b8bf5b59708a08bfe8\" or\n    stream \"\
+    6740288c3c3d02984d1dc624d77e198f\" or\n    stream \"922aad7bec1836c83ede051b153d3d09\"\
+    \n}"
+  expected:
+  - - tag
+    - '"APPLE"'
+    - [stream, '"f0596f03644177b8bf5b59708a08bfe8"']
+  - - tag
+    - '"Snow"'
+    - [stream, '"6740288c3c3d02984d1dc624d77e198f"']
+  - - tag
+    - '"Date"'
+    - [stream, '"922aad7bec1836c83ede051b153d3d09"']
+  - - return
+    - - [stream, '"f0596f03644177b8bf5b59708a08bfe8"']
+      - OR
+      - [stream, '"6740288c3c3d02984d1dc624d77e198f"']
+      - OR
+      - [stream, '"922aad7bec1836c83ede051b153d3d09"']
+      
+test_tag_stream_2:
+  input: "tag \"red\"   {stream \"f0596f03644177b8bf5b59708a08bfe8\"}\ntag \"white\"\
+    \ {stream \"6740288c3c3d02984d1dc624d77e198f\"}\ntag \"blue\"  {stream \"922aad7bec1836c83ede051b153d3d09\"\
+    }\nreturn {\n    stream \"f0596f03644177b8bf5b59708a08bfe8\" or\n    stream \"\
+    6740288c3c3d02984d1dc624d77e198f\" or\n    stream \"922aad7bec1836c83ede051b153d3d09\"\
+    \n}"
+  expected:
+  - - tag
+    - '"red"'
+    - [stream, '"f0596f03644177b8bf5b59708a08bfe8"']
+  - - tag
+    - '"white"'
+    - [stream, '"6740288c3c3d02984d1dc624d77e198f"']
+  - - tag
+    - '"blue"'
+    - [stream, '"922aad7bec1836c83ede051b153d3d09"']
+  - - return
+    - - [stream, '"f0596f03644177b8bf5b59708a08bfe8"']
+      - OR
+      - [stream, '"6740288c3c3d02984d1dc624d77e198f"']
+      - OR
+      - [stream, '"922aad7bec1836c83ede051b153d3d09"']
+
+test_tag_return:
+  input: "tag \"Mac\" { interaction.content contains \"Mac\" \nOR interaction.content\
+    \ contains \"Macintosh\" }\ntag \"iPod\" { interaction.content contains \"iPod\"\
+    \ }\ntag \"iPad\" { interaction.content contains \"iPad\" }\ntag \"iTunes\" {\
+    \ interaction.content contains \"iTunes\" }\ntag \"Safari\" { interaction.content\
+    \ contains \"Safari\" }\ntag \"Steve Jobs\" { interaction.content contains \"\
+    Steve Jobs\" }\ntag \"Steve Wozniak\" { interaction.content contains \"Steve Wozniak\"\
+    \ }\n\nreturn {\n      interaction.content contains \"apple\"\n}\n"
+  expected:
+  - - tag
+    - '"Mac"'
+    - - [interaction.content, contains, '"Mac"']
+      - OR
+      - [interaction.content, contains, '"Macintosh"']
+  - - tag
+    - '"iPod"'
+    - [interaction.content, contains, '"iPod"']
+  - - tag
+    - '"iPad"'
+    - [interaction.content, contains, '"iPad"']
+  - - tag
+    - '"iTunes"'
+    - [interaction.content, contains, '"iTunes"']
+  - - tag
+    - '"Safari"'
+    - [interaction.content, contains, '"Safari"']
+  - - tag
+    - '"Steve Jobs"'
+    - [interaction.content, contains, '"Steve Jobs"']
+  - - tag
+    - '"Steve Wozniak"'
+    - [interaction.content, contains, '"Steve Wozniak"']
+  - - return
+    - [interaction.content, contains, '"apple"']
+
+
+test_ignore_comments:
+  input: "\ntwitter.place.country_code == \"us\"\n// New York\nand not interaction.geo\
+    \ geo_radius \"40.73141253955102,-73.9975634765625:50\"\n// Los Angeles\nand not\
+    \ interaction.geo geo_radius \"34.04557362447603,-118.25323974609375:50\"\n//\
+    \ Chicago \nand not interaction.geo geo_radius \"41.87137359046374,-87.670048828125:50\"\
+    \n// Houston \nand not interaction.geo geo_radius \"29.749799863884224,-95.36322509765625:50\"\
+    \n// Philadelphia\nand not interaction.geo geo_radius \"39.95583044348851,-75.145634765625:50\"\
+    \n// Phoenix\nand not interaction.geo geo_radius \"33.475866285896466,-112.07755004882813:50\"\
+    \n// San Antonio\nand not interaction.geo geo_radius \"29.472807218822343,-98.49982177734375:50\"\
+    \n// San Diego\nand not interaction.geo geo_radius \"32.75467986374471,-117.1848193359375:50\"\
+    \n// Dallas\nand not interaction.geo geo_radius \"32.8285647393374,-96.7996875:50\"\
+    \n// San Jose\nand not interaction.geo geo_radius \"37.32187207146947,-121.88971435546875:50\"\
+    \n"
+  expected:
+  - - [twitter.place.country_code, ==, '"us"']
+    - AND
+    - - not
+      - [interaction.geo, geo_radius, '"40.73141253955102,-73.9975634765625:50"']
+    - AND
+    - - not
+      - [interaction.geo, geo_radius, '"34.04557362447603,-118.25323974609375:50"']
+    - AND
+    - - not
+      - [interaction.geo, geo_radius, '"41.87137359046374,-87.670048828125:50"']
+    - AND
+    - - not
+      - [interaction.geo, geo_radius, '"29.749799863884224,-95.36322509765625:50"']
+    - AND
+    - - not
+      - [interaction.geo, geo_radius, '"39.95583044348851,-75.145634765625:50"']
+    - AND
+    - - not
+      - [interaction.geo, geo_radius, '"33.475866285896466,-112.07755004882813:50"']
+    - AND
+    - - not
+      - [interaction.geo, geo_radius, '"29.472807218822343,-98.49982177734375:50"']
+    - AND
+    - - not
+      - [interaction.geo, geo_radius, '"32.75467986374471,-117.1848193359375:50"']
+    - AND
+    - - not
+      - [interaction.geo, geo_radius, '"32.8285647393374,-96.7996875:50"']
+    - AND
+    - - not
+      - [interaction.geo, geo_radius, '"37.32187207146947,-121.88971435546875:50"']
+
+test_tag_return_with_comments:
+  input: "\ntag \"New York City\" {interaction.geo geo_radius \"40.73141253955102,-73.9975634765625:50\"\
+    }\ntag \"Los Angeles\"   {interaction.geo geo_radius \"34.04557362447603,-118.25323974609375:50\"\
+    }\ntag \"Chicago\"       {interaction.geo geo_radius \"41.87137359046374,-87.670048828125:50\"\
+    }\ntag \"Houston\"       {interaction.geo geo_radius \"29.749799863884224,-95.36322509765625:50\"\
+    }\ntag \"Philadelphia\"  {interaction.geo geo_radius \"39.95583044348851,-75.145634765625:50\"\
+    }\ntag \"Phoenix\"       {interaction.geo geo_radius \"33.475866285896466,-112.07755004882813:50\"\
+    }\ntag \"San Antonio\"   {interaction.geo geo_radius \"29.472807218822343,-98.49982177734375:50\"\
+    }\ntag \"San Diego\"     {interaction.geo geo_radius \"32.75467986374471,-117.1848193359375:50\"\
+    }\ntag \"Dallas\"        {interaction.geo geo_radius \"32.8285647393374,-96.7996875:50\"\
+    }\ntag \"San Jose\"      {interaction.geo geo_radius \"37.32187207146947,-121.88971435546875:50\"\
+    }\n\nreturn {\n  // New York\n  interaction.geo geo_radius \"40.73141253955102,-73.9975634765625:50\"\
+    \n  // Los Angeles\n  or interaction.geo geo_radius \"34.04557362447603,-118.25323974609375:50\"\
+    \n  // Chicago\n  or interaction.geo geo_radius \"41.87137359046374,-87.670048828125:50\"\
+    \n  // Houston\n  or interaction.geo geo_radius \"29.749799863884224,-95.36322509765625:50\"\
+    \n  // Philadelphia\n  or interaction.geo geo_radius \"39.95583044348851,-75.145634765625:50\"\
+    \n  // Phoenix\n  or interaction.geo geo_radius \"33.475866285896466,-112.07755004882813:50\"\
+    \n  // San Antonio\n  or interaction.geo geo_radius \"29.472807218822343,-98.49982177734375:50\"\
+    \n  // San Diego\n  or interaction.geo geo_radius \"32.75467986374471,-117.1848193359375:50\"\
+    \n  // Dallas\n  or interaction.geo geo_radius \"32.8285647393374,-96.7996875:50\"\
+    \n  // San Jose\n  or interaction.geo geo_radius \"37.32187207146947,-121.88971435546875:50\"\
+    \n}\n"
+  expected:
+  - - tag
+    - '"New York City"'
+    - [interaction.geo, geo_radius, '"40.73141253955102,-73.9975634765625:50"']
+  - - tag
+    - '"Los Angeles"'
+    - [interaction.geo, geo_radius, '"34.04557362447603,-118.25323974609375:50"']
+  - - tag
+    - '"Chicago"'
+    - [interaction.geo, geo_radius, '"41.87137359046374,-87.670048828125:50"']
+  - - tag
+    - '"Houston"'
+    - [interaction.geo, geo_radius, '"29.749799863884224,-95.36322509765625:50"']
+  - - tag
+    - '"Philadelphia"'
+    - [interaction.geo, geo_radius, '"39.95583044348851,-75.145634765625:50"']
+  - - tag
+    - '"Phoenix"'
+    - [interaction.geo, geo_radius, '"33.475866285896466,-112.07755004882813:50"']
+  - - tag
+    - '"San Antonio"'
+    - [interaction.geo, geo_radius, '"29.472807218822343,-98.49982177734375:50"']
+  - - tag
+    - '"San Diego"'
+    - [interaction.geo, geo_radius, '"32.75467986374471,-117.1848193359375:50"']
+  - - tag
+    - '"Dallas"'
+    - [interaction.geo, geo_radius, '"32.8285647393374,-96.7996875:50"']
+  - - tag
+    - '"San Jose"'
+    - [interaction.geo, geo_radius, '"37.32187207146947,-121.88971435546875:50"']
+  - - return
+    - - [interaction.geo, geo_radius, '"40.73141253955102,-73.9975634765625:50"']
+      - OR
+      - [interaction.geo, geo_radius, '"34.04557362447603,-118.25323974609375:50"']
+      - OR
+      - [interaction.geo, geo_radius, '"41.87137359046374,-87.670048828125:50"']
+      - OR
+      - [interaction.geo, geo_radius, '"29.749799863884224,-95.36322509765625:50"']
+      - OR
+      - [interaction.geo, geo_radius, '"39.95583044348851,-75.145634765625:50"']
+      - OR
+      - [interaction.geo, geo_radius, '"33.475866285896466,-112.07755004882813:50"']
+      - OR
+      - [interaction.geo, geo_radius, '"29.472807218822343,-98.49982177734375:50"']
+      - OR
+      - [interaction.geo, geo_radius, '"32.75467986374471,-117.1848193359375:50"']
+      - OR
+      - [interaction.geo, geo_radius, '"32.8285647393374,-96.7996875:50"']
+      - OR
+      - [interaction.geo, geo_radius, '"37.32187207146947,-121.88971435546875:50"']  
