@@ -1,14 +1,30 @@
 datasift-csdl-parser
 ====================
 
-Python parser for Datasift's CSDL grammar. See http://dev.datasift.com/csdl
+Python-based syntactic parser for Datasift's CSDL grammar (http://dev.datasift.com/csdl). This does not check semantics, but it will produce a 
+valid AST.
 
 Usage
 -----
 
+Behind the scenes, this library depends on the excellent library pyparsing (http://pyparsing.wikispaces.com).
+Result returned are unadulterated structures from pyparsing.
+
     from csdl.parser import parser
     parsed = parser.parseString('twitter.text contains "Cincinnati Reds"')
     assert parsed.asList() == [['twitter.text', 'contains', '"Cincinnati Reds"']]
+    
+To restrict what type of operators are acceptable:
+
+    from csdl.parser import CSDLParser
+    class MyParser(CSDLParser):
+        def validateIdentifier(self, token):
+            if token[0].startswith("interaction"):
+                raise Exception("fail")        
+    parser = MyParser()
+    parser.parseString('twitter.text contains "Cincinnati Reds"')
+    assert_raises(Exception, parser.parseString, "interaction.geo exists")
+
 
 Running and adding tests
 ------------------------
