@@ -7,7 +7,7 @@ from nose.tools import assert_raises #@UnresolvedImport
 import os
 import sys
 
-from csdl.parser import parser
+from csdl.parser import parser, CSDLParser
 
 parse = parser.parseString
 
@@ -42,6 +42,16 @@ class Test(unittest.TestCase):
                 test["result"] = parsed.asList()
                 return "Result...\n" + yaml.dump({test_name: test})
             assert parsed.asList() == output, on_fail()
+    
+    def test_custom_parser(self):
+        class MyParser(CSDLParser):
+            def validateIdentifier(self, token):
+                if token[0].startswith("interaction"):
+                    raise Exception("fail")
+        
+        parser = MyParser()
+        parser.parseString('twitter.text contains "Cincinnati Reds"')
+        assert_raises(Exception, parser.parseString, "interaction.geo exists")
     
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
