@@ -9,7 +9,7 @@ class CSDLParser(object):
     
         # literals
         number = pp.Regex(r"[+-]?\d+(:?\.\d*)?(:?[eE][+-]?\d+)?").setName("number")
-        numberList = pp.Group(pp.Suppress('[') + number + pp.ZeroOrMore("," + number) + pp.Suppress(']')).setName("numberList")
+        numberList = pp.Group(pp.Literal('[') + number + pp.ZeroOrMore("," + number) + pp.Literal(']')).setName("numberList")
         string = pp.dblQuotedString
         literals = number | numberList | string
     
@@ -30,7 +30,7 @@ class CSDLParser(object):
         ).setName("comparison")
     
         condition = comparison | stream | exists | subExpr
-        subExpr << pp.Literal('(') + condition + pp.Literal(')')
+        subExpr << pp.Suppress('(') + condition + pp.Suppress(')')
         negation = pp.Group(pp.CaselessLiteral("not") + condition).setName("negation")
         condition = condition | negation
     

@@ -31,17 +31,19 @@ test_OR_multiline:
     - OR
     - [twitter.retweeted.text, contains, '"marketing"']
     
-test_AND_OR_AND:
-  input: interaction.sample < 50 and (twitter.text contains "coffee" or (twitter.retweet.text contains "coffee" and interaction.sample <= 10))
+test_AND_OR_OR_AND:
+  input: interaction.sample < 50 and (twitter.text contains "coffee") or (twitter.retweet.text contains "coffee" or interaction.sample <= 10 and interation.text contains "ponies")
   expected:
-  - - [interaction.sample, <, '50']
-    - AND
-    - - [twitter.text, contains, '"coffee"']
+  - - - [interaction.sample, <, '50']
+      - AND
+      - [twitter.text, contains, '"coffee"']
+    - OR
+    - - [twitter.retweet.text, contains, '"coffee"']
       - OR
-      - - [twitter.retweet.text, contains, '"coffee"']
+      - - [interaction.sample, <=, '10']
         - AND
-        - [interaction.sample, <=, '10']
-  
+        - [interation.text, contains, '"ponies"']
+
 test_multiline:
   input: "interaction.sample < 50\nand (\n    twitter.text contains \"coffee\" or\n\
     \    ( \n        twitter.retweet.text contains \"coffee\" and\n        interaction.sample\
@@ -88,7 +90,8 @@ test_number_list:
   expected:
   - - twitter.user.id
     - in
-    - ['111111111', ',', '111111112', ',', '111111113']
+    - ['[', '111111111', ',', '111111112', ',', '111111113', ']']
+    
 test_tag:
   input: "tag \"Steve Jobs\" { interaction.content contains \"Steve Jobs\" }\nreturn\
     \ {\n    interaction.content contains_any \"Apple, Mac, iPad, Steve Jobs\"\n}"
