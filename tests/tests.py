@@ -8,6 +8,7 @@ import os
 import sys
 
 from csdl.parser import parser, CSDLParser
+import re
 
 parse = parser.parseString
 
@@ -52,6 +53,30 @@ class Test(unittest.TestCase):
         parser = MyParser()
         parser.parseString('twitter.text contains "Cincinnati Reds"')
         assert_raises(Exception, parser.parseString, "interaction.geo exists")
+        
+    def xtest_flatten(self):
+        d = yaml.load(open(os.path.join(os.path.dirname(__file__), "tests.yaml")))
+        for test_name, test in d.iteritems():
+            if 'comments' in test_name:
+                continue
+            print "testing", test_name
+            input = re.sub(r'\s+', ' ', test['input']).strip()
+            input = re.sub(r'\bor\b', 'OR', input)
+            input = re.sub(r'\band\b', 'AND', input)
+            input = re.sub(r'{\s+', "{", input)
+            input = re.sub(r'\s+}', "}", input)
+            
+            test.pop('expected')
+            print input
+            parsed = parse(input)
+            _, flat = parser.flatten(parsed.asList())
+            flat = re.sub(r'{\s+', "{", flat)
+            flat = re.sub(r'\s+}', "}", flat)
+            def on_fail():
+                test["flat"] = flat
+                return "Result...\n" + yaml.dump({test_name: test})
+            print flat
+            assert input == flat, on_fail()
     
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

@@ -36,7 +36,7 @@ test_AND_OR_OR_AND:
   expected:
   - - - [interaction.sample, <, '50']
       - AND
-      - [twitter.text, contains, '"coffee"']
+      - - [twitter.text, contains, '"coffee"']
     - OR
     - - [twitter.retweet.text, contains, '"coffee"']
       - OR
@@ -141,8 +141,7 @@ test_tag_stream_2:
   input: "tag \"red\"   {stream \"f0596f03644177b8bf5b59708a08bfe8\"}\ntag \"white\"\
     \ {stream \"6740288c3c3d02984d1dc624d77e198f\"}\ntag \"blue\"  {stream \"922aad7bec1836c83ede051b153d3d09\"\
     }\nreturn {\n    stream \"f0596f03644177b8bf5b59708a08bfe8\" or\n    stream \"\
-    6740288c3c3d02984d1dc624d77e198f\" or\n    stream \"922aad7bec1836c83ede051b153d3d09\"\
-    \n}"
+    6740288c3c3d02984d1dc624d77e198f\" or\n    stream \"922aad7bec1836c83ede051b153d3d09\"}"
   expected:
   - - tag
     - '"red"'

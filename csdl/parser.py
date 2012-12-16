@@ -30,12 +30,11 @@ class CSDLParser(object):
         ).setName("comparison")
     
         condition = comparison | stream | exists | subExpr
-        subExpr << pp.Suppress('(') + condition + pp.Suppress(')')
-        negation = pp.Group(pp.CaselessLiteral("not") + condition).setName("negation")
-        condition = condition | negation
+        subExpr << pp.nestedExpr(content=condition)
     
         # standard boolean operator precedence
         expr = pp.operatorPrecedence(condition,[
+            (pp.CaselessLiteral("not"), 1, pp.opAssoc.RIGHT, ), 
             (pp.CaselessLiteral("AND"), 2, pp.opAssoc.LEFT, ),
             (pp.CaselessLiteral("OR"), 2, pp.opAssoc.LEFT, ),
             ])
@@ -67,5 +66,5 @@ class CSDLParser(object):
     def validateOperator(self, tokens):
         """Called for every operator parsed."""
         return tokens
-
+    
 parser = CSDLParser()
