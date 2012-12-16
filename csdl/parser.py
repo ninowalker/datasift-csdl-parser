@@ -67,4 +67,21 @@ class CSDLParser(object):
         """Called for every operator parsed."""
         return tokens
     
+    def flatten(self, expr):
+        a = []
+        contains_sub_expr = False
+        if isinstance(expr, list):
+            for ex in expr:
+                cv, v = self.flatten(ex)
+                contains_sub_expr = contains_sub_expr or cv 
+                if cv:
+                    a.append("(")
+                    a.append(v)
+                    a.append(")")
+                else:
+                    a.append(v)
+        else:
+            return False, expr
+        return contains_sub_expr, " ".join(a)
+
 parser = CSDLParser()
