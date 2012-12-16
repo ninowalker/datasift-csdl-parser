@@ -40,10 +40,10 @@ class CSDLParser(object):
             ])
     
         # tag "thing" { expr }
-        tag = pp.Group(pp.Literal("tag") + pp.quotedString + pp.Literal('{') + expr + pp.Literal('}')).setName("tag")
+        tag = pp.Group(pp.Literal("tag") + pp.quotedString + pp.nestedExpr("{", "}", expr)).setName("tag")
     
         # return { expr }
-        a_return = pp.Group(pp.Literal("return") + pp.Literal('{') + expr + pp.Literal('}')).setName("return")
+        a_return = pp.Group(pp.Literal("return") + pp.nestedExpr("{", "}", expr)).setName("return")
     
         # a single expression or tag [, tag, ...] return { expression }
         parser = expr | (pp.OneOrMore(tag) + a_return)

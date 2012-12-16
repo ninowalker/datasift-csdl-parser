@@ -54,7 +54,7 @@ class Test(unittest.TestCase):
         parser.parseString('twitter.text contains "Cincinnati Reds"')
         assert_raises(Exception, parser.parseString, "interaction.geo exists")
         
-    def test_flatten(self):
+    def xtest_flatten(self):
         d = yaml.load(open(os.path.join(os.path.dirname(__file__), "tests.yaml")))
         for test_name, test in d.iteritems():
             if 'comments' in test_name:

@@ -98,13 +98,9 @@ test_tag:
   expected:
   - - tag
     - '"Steve Jobs"'
-    - '{'
-    - [interaction.content, contains, '"Steve Jobs"']
-    - '}'
+    - - [interaction.content, contains, '"Steve Jobs"']
   - - return
-    - '{'
-    - [interaction.content, contains_any, '"Apple, Mac, iPad, Steve Jobs"']
-    - '}'
+    - - [interaction.content, contains_any, '"Apple, Mac, iPad, Steve Jobs"']
 
 test_tag_stream:
   input: "tag \"APPLE\" {stream \"f0596f03644177b8bf5b59708a08bfe8\"}\ntag \"Snow\"\
@@ -115,27 +111,19 @@ test_tag_stream:
   expected:
   - - tag
     - '"APPLE"'
-    - '{'
-    - [stream, '"f0596f03644177b8bf5b59708a08bfe8"']
-    - '}'
+    - - [stream, '"f0596f03644177b8bf5b59708a08bfe8"']
   - - tag
     - '"Snow"'
-    - '{'
-    - [stream, '"6740288c3c3d02984d1dc624d77e198f"']
-    - '}'
+    - - [stream, '"6740288c3c3d02984d1dc624d77e198f"']
   - - tag
     - '"Date"'
-    - '{'
-    - [stream, '"922aad7bec1836c83ede051b153d3d09"']
-    - '}'
+    - - [stream, '"922aad7bec1836c83ede051b153d3d09"']
   - - return
-    - '{'
-    - - [stream, '"f0596f03644177b8bf5b59708a08bfe8"']
-      - OR
-      - [stream, '"6740288c3c3d02984d1dc624d77e198f"']
-      - OR
-      - [stream, '"922aad7bec1836c83ede051b153d3d09"']
-    - '}'
+    - - - [stream, '"f0596f03644177b8bf5b59708a08bfe8"']
+        - OR
+        - [stream, '"6740288c3c3d02984d1dc624d77e198f"']
+        - OR
+        - [stream, '"922aad7bec1836c83ede051b153d3d09"']
       
 test_tag_stream_2:
   input: "tag \"red\"   {stream \"f0596f03644177b8bf5b59708a08bfe8\"}\ntag \"white\"\
@@ -145,28 +133,19 @@ test_tag_stream_2:
   expected:
   - - tag
     - '"red"'
-    - '{'
-    - [stream, '"f0596f03644177b8bf5b59708a08bfe8"']
-    - '}'
+    - - [stream, '"f0596f03644177b8bf5b59708a08bfe8"']
   - - tag
     - '"white"'
-    - '{'
-    - [stream, '"6740288c3c3d02984d1dc624d77e198f"']
-    - '}'
+    - - [stream, '"6740288c3c3d02984d1dc624d77e198f"']
   - - tag
     - '"blue"'
-    - '{'
-    - [stream, '"922aad7bec1836c83ede051b153d3d09"']
-    - '}'
+    - - [stream, '"922aad7bec1836c83ede051b153d3d09"']
   - - return
-    - '{'
-    - - [stream, '"f0596f03644177b8bf5b59708a08bfe8"']
-      - OR
-      - [stream, '"6740288c3c3d02984d1dc624d77e198f"']
-      - OR
-      - [stream, '"922aad7bec1836c83ede051b153d3d09"']
-    - '}'
-
+    - - - [stream, '"f0596f03644177b8bf5b59708a08bfe8"']
+        - OR
+        - [stream, '"6740288c3c3d02984d1dc624d77e198f"']
+        - OR
+        - [stream, '"922aad7bec1836c83ede051b153d3d09"']
 test_tag_return:
   input: "tag \"Mac\" { interaction.content contains \"Mac\" \nOR interaction.content\
     \ contains \"Macintosh\" }\ntag \"iPod\" { interaction.content contains \"iPod\"\
@@ -178,45 +157,29 @@ test_tag_return:
   expected:
   - - tag
     - '"Mac"'
-    - '{'
-    - - [interaction.content, contains, '"Mac"']
-      - OR
-      - [interaction.content, contains, '"Macintosh"']
-    - '}'
+    - - - [interaction.content, contains, '"Mac"']
+        - OR
+        - [interaction.content, contains, '"Macintosh"']
   - - tag
     - '"iPod"'
-    - '{'
-    - [interaction.content, contains, '"iPod"']
-    - '}'
+    - - [interaction.content, contains, '"iPod"']
   - - tag
     - '"iPad"'
-    - '{'
-    - [interaction.content, contains, '"iPad"']
-    - '}'
+    - - [interaction.content, contains, '"iPad"']
   - - tag
     - '"iTunes"'
-    - '{'
-    - [interaction.content, contains, '"iTunes"']
-    - '}'
+    - - [interaction.content, contains, '"iTunes"']
   - - tag
     - '"Safari"'
-    - '{'
-    - [interaction.content, contains, '"Safari"']
-    - '}'
+    - - [interaction.content, contains, '"Safari"']
   - - tag
     - '"Steve Jobs"'
-    - '{'
-    - [interaction.content, contains, '"Steve Jobs"']
-    - '}'
+    - - [interaction.content, contains, '"Steve Jobs"']
   - - tag
     - '"Steve Wozniak"'
-    - '{'
-    - [interaction.content, contains, '"Steve Wozniak"']
-    - '}'
+    - - [interaction.content, contains, '"Steve Wozniak"']
   - - return
-    - '{'
-    - [interaction.content, contains, '"apple"']
-    - '}'
+    - - [interaction.content, contains, '"apple"']
 
 test_ignore_comments:
   input: "\ntwitter.place.country_code == \"us\"\n// New York\nand not interaction.geo\
@@ -289,73 +252,51 @@ test_tag_return_with_comments:
   expected:
   - - tag
     - '"New York City"'
-    - '{'
-    - [interaction.geo, geo_radius, '"40.73141253955102,-73.9975634765625:50"']
-    - '}'
+    - - [interaction.geo, geo_radius, '"40.73141253955102,-73.9975634765625:50"']
   - - tag
     - '"Los Angeles"'
-    - '{'
-    - [interaction.geo, geo_radius, '"34.04557362447603,-118.25323974609375:50"']
-    - '}'
+    - - [interaction.geo, geo_radius, '"34.04557362447603,-118.25323974609375:50"']
   - - tag
     - '"Chicago"'
-    - '{'
-    - [interaction.geo, geo_radius, '"41.87137359046374,-87.670048828125:50"']
-    - '}'
+    - - [interaction.geo, geo_radius, '"41.87137359046374,-87.670048828125:50"']
   - - tag
     - '"Houston"'
-    - '{'
-    - [interaction.geo, geo_radius, '"29.749799863884224,-95.36322509765625:50"']
-    - '}'
+    - - [interaction.geo, geo_radius, '"29.749799863884224,-95.36322509765625:50"']
   - - tag
     - '"Philadelphia"'
-    - '{'
-    - [interaction.geo, geo_radius, '"39.95583044348851,-75.145634765625:50"']
-    - '}'
+    - - [interaction.geo, geo_radius, '"39.95583044348851,-75.145634765625:50"']
   - - tag
     - '"Phoenix"'
-    - '{'
-    - [interaction.geo, geo_radius, '"33.475866285896466,-112.07755004882813:50"']
-    - '}'
+    - - [interaction.geo, geo_radius, '"33.475866285896466,-112.07755004882813:50"']
   - - tag
     - '"San Antonio"'
-    - '{'
-    - [interaction.geo, geo_radius, '"29.472807218822343,-98.49982177734375:50"']
-    - '}'
+    - - [interaction.geo, geo_radius, '"29.472807218822343,-98.49982177734375:50"']
   - - tag
     - '"San Diego"'
-    - '{'
-    - [interaction.geo, geo_radius, '"32.75467986374471,-117.1848193359375:50"']
-    - '}'
+    - - [interaction.geo, geo_radius, '"32.75467986374471,-117.1848193359375:50"']
   - - tag
     - '"Dallas"'
-    - '{'
-    - [interaction.geo, geo_radius, '"32.8285647393374,-96.7996875:50"']
-    - '}'
+    - - [interaction.geo, geo_radius, '"32.8285647393374,-96.7996875:50"']
   - - tag
     - '"San Jose"'
-    - '{'
-    - [interaction.geo, geo_radius, '"37.32187207146947,-121.88971435546875:50"']
-    - '}'
+    - - [interaction.geo, geo_radius, '"37.32187207146947,-121.88971435546875:50"']
   - - return
-    - '{'
-    - - [interaction.geo, geo_radius, '"40.73141253955102,-73.9975634765625:50"']
-      - OR
-      - [interaction.geo, geo_radius, '"34.04557362447603,-118.25323974609375:50"']
-      - OR
-      - [interaction.geo, geo_radius, '"41.87137359046374,-87.670048828125:50"']
-      - OR
-      - [interaction.geo, geo_radius, '"29.749799863884224,-95.36322509765625:50"']
-      - OR
-      - [interaction.geo, geo_radius, '"39.95583044348851,-75.145634765625:50"']
-      - OR
-      - [interaction.geo, geo_radius, '"33.475866285896466,-112.07755004882813:50"']
-      - OR
-      - [interaction.geo, geo_radius, '"29.472807218822343,-98.49982177734375:50"']
-      - OR
-      - [interaction.geo, geo_radius, '"32.75467986374471,-117.1848193359375:50"']
-      - OR
-      - [interaction.geo, geo_radius, '"32.8285647393374,-96.7996875:50"']
-      - OR
-      - [interaction.geo, geo_radius, '"37.32187207146947,-121.88971435546875:50"']
-    - '}'
+    - - - [interaction.geo, geo_radius, '"40.73141253955102,-73.9975634765625:50"']
+        - OR
+        - [interaction.geo, geo_radius, '"34.04557362447603,-118.25323974609375:50"']
+        - OR
+        - [interaction.geo, geo_radius, '"41.87137359046374,-87.670048828125:50"']
+        - OR
+        - [interaction.geo, geo_radius, '"29.749799863884224,-95.36322509765625:50"']
+        - OR
+        - [interaction.geo, geo_radius, '"39.95583044348851,-75.145634765625:50"']
+        - OR
+        - [interaction.geo, geo_radius, '"33.475866285896466,-112.07755004882813:50"']
+        - OR
+        - [interaction.geo, geo_radius, '"29.472807218822343,-98.49982177734375:50"']
+        - OR
+        - [interaction.geo, geo_radius, '"32.75467986374471,-117.1848193359375:50"']
+        - OR
+        - [interaction.geo, geo_radius, '"32.8285647393374,-96.7996875:50"']
+        - OR
+        - [interaction.geo, geo_radius, '"37.32187207146947,-121.88971435546875:50"']
