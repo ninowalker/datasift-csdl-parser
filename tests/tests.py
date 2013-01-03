@@ -54,6 +54,10 @@ class Test(unittest.TestCase):
         parser.parseString('twitter.text contains "Cincinnati Reds"')
         assert_raises(Exception, parser.parseString, "interaction.geo exists")
         
+    def test_exception(self):
+        with assert_raises(CSDLParser.ParseException):
+            parse("ponies!!!")
+        
     def xtest_flatten(self):
         d = yaml.load(open(os.path.join(os.path.dirname(__file__), "tests.yaml")))
         for test_name, test in d.iteritems():
