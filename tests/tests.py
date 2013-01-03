@@ -58,9 +58,6 @@ class Test(unittest.TestCase):
         with assert_raises(CSDLParser.ParseException):
             parse("ponies!!!")
         
-        with assert_raises(CSDLParser.ParseException):
-            parse('twitter.text contains "Cincinnati Reds"')
-        
     def xtest_flatten(self):
         d = yaml.load(open(os.path.join(os.path.dirname(__file__), "tests.yaml")))
         for test_name, test in d.iteritems():

@@ -62,8 +62,7 @@ class CSDLParser(object):
     def parseString(self, s):
         """Parses a given string into an AST."""
         return self.parser.parseString(s)
-            
-    
+
     def validateIdentifier(self, tokens):
         """Called for every identifier parsed."""
         return tokens
