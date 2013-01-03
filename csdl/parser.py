@@ -3,6 +3,10 @@ import re
 
 
 class CSDLParser(object):
+
+    """Expose the PyParsing exception as to avoid creating import dependencies downstream.""" 
+    ParseException = pp.ParseBaseException
+    
     def __init__(self):
         # supported operators
         operator = pp.Regex(r"<=|>=|<>|\!=|==|<|>|not|in|regex_partial|regex_exact|geo_box|geo_radius|geo_polygon|contains_any|substr|contains_near|any|contains_substr|near|contains").setName("operator").addParseAction(self.validateOperator)
@@ -58,6 +62,7 @@ class CSDLParser(object):
     def parseString(self, s):
         """Parses a given string into an AST."""
         return self.parser.parseString(s)
+            
     
     def validateIdentifier(self, tokens):
         """Called for every identifier parsed."""
